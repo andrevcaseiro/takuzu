@@ -1,0 +1,2 @@
+# takuzu
+Artificial inteligence project
