@@ -64,6 +64,11 @@ class Board:
             > stdin.readline()
         """
         # TODO
+        
+        sys.stdin.readline() #??
+
+
+
         pass
 
     # TODO: outros metodos da classe
