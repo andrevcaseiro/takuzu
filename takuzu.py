@@ -91,7 +91,16 @@ class Board:
 
         def counts(arr):
             unique, counts = np.unique(arr, return_counts=True)
-            return dict(zip(unique, counts))
+            c = dict(zip(unique, counts))
+
+            if 0 not in c:
+                c[0] = 0
+            if 1 not in c:
+                c[1] = 0
+            if 2 not in c:
+                c[2] = 0
+
+            return c
 
         # TODO        
         board = Board()
@@ -155,7 +164,7 @@ class Takuzu(Problem):
         self.actions(state)."""
 
         newBoard = state.board.copy()
-        newBoard.lines[action[0], action[1]] = action[2]
+        newBoard[action[0], action[1]] = action[2]
 
         return TakuzuState(newBoard)
 
@@ -166,33 +175,31 @@ class Takuzu(Problem):
         # TODO
 
         #tabuleiro preenchido
-        if self.board.globCounts[2] != 0:
+        if state.board.globCounts[2] != 0:
             return False
 
         #numero igual de 0 e 1 em cada linha e coluna
-        for i in range(self.board.n):
-            ul = self.board.lines[i].count(1)
-            zl = self.board.lines[i].count(0)
-            uc = self.board.lines[:,i].count(1)
-            zc = self.board.lines[:,i].count(0)
-            if ul != zl or uc != zc:
+        for i in range(state.board.n):
+            ul = state.board.lines[i].sum()
+            uc = state.board.lines[:,i].sum()
+            if ul != state.board.n/2 or uc != state.board.n/2:
                 return False                
         
         #linhas e colunas diferentes
-        for i in range(self.board.n):
-            temp_row = self.board.lines[i]
-            temp_col = self.board.lines[:,i]
-            for j in range(i+1, self.board.n):
-                if np.array_equal(temp_col,self.board.lines[:,j]) or np.array_equal(temp_row,self.board.lines[j]):
+        for i in range(state.board.n):
+            temp_row = state.board.lines[i]
+            temp_col = state.board.lines[:,i]
+            for j in range(i+1, state.board.n):
+                if np.array_equal(temp_col,state.board.lines[:,j]) or np.array_equal(temp_row,state.board.lines[j]):
                     return False 
 
         #nao ha mais que 2 adjacentes
-        for i in range(self.board.n):
-            for j in range(1,self.board.n-1):
-                adj_row = self.board.adjacent_horizontal_numbers(i, j)
-                adj_col = self.board.adjacent_vertical_numbers(j, i)
-                num_row = self.board.get_number(i,j)
-                num_col = self.board.get_number(j,i)
+        for i in range(state.board.n):
+            for j in range(1,state.board.n-1):
+                adj_row = state.board.adjacent_horizontal_numbers(i, j)
+                adj_col = state.board.adjacent_vertical_numbers(j, i)
+                num_row = state.board.get_number(i,j)
+                num_col = state.board.get_number(j,i)
                 if num_row == adj_row[0] and num_row == adj_row[1] or num_col == adj_col[0] and num_col == adj_col[1]:
                     return False
 
@@ -206,17 +213,17 @@ class Takuzu(Problem):
     # TODO: outros metodos da classe
 
 
-#if __name__ == "__main__":
+if __name__ == "__main__":
     # TODO:
     # Ler o ficheiro do standard input,
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
-    #board = Board.parse_instance_from_stdin()
-    #problem = Takuzu(board)
-#
-    ## Obter o nó solução usando a procura em profundidade:
-    #goal_node = depth_first_tree_search(problem)
-    ## Verificar se foi atingida a solução
-    #print("Is goal?", problem.goal_test(goal_node.state))
-    #print("Solution:\n", goal_node.state.board, sep="")
+    board = Board.parse_instance_from_stdin()
+    problem = Takuzu(board)
+
+    # Obter o nó solução usando a procura em profundidade:
+    goal_node = depth_first_tree_search(problem)
+    # Verificar se foi atingida a solução
+    print("Is goal?", problem.goal_test(goal_node.state))
+    print("Solution:\n", goal_node.state.board, sep="")
