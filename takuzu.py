@@ -136,7 +136,37 @@ class Takuzu(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
         # TODO
-        pass
+
+        #tabuleiro preenchido??
+
+        #numero igual de 0 e 1 em cada linha e coluna
+        for i in range(self.board.n):
+            ul = self.board.lines[i].count(1)
+            zl = self.board.lines[i].count(0)
+            uc = self.board.lines[:,i].count(1)
+            zc = self.board.lines[:,i].count(0)
+            if ul != zl or uc != zc:
+                return False                
+        
+        #linhas e colunas diferentes
+        for i in range(self.board.n):
+            temp_row = self.board.lines[i]
+            temp_col = self.board.lines[:,i]
+            for j in range(i+1, self.board.n):
+                if np.array_equal(temp_col,self.board.lines[:,j]) or np.array_equal(temp_row,self.board.lines[j]):
+                    return False 
+
+        #nao ha mais que 2 adjacentes
+        for i in range(self.board.n):
+            for j in range(1,self.board.n-1):
+                adj_row = self.board.adjacent_horizontal_numbers(i, j)
+                adj_col = self.board.adjacent_vertical_numbers(j, i)
+                num_row = self.board.get_number(i,j)
+                num_col = self.board.get_number(j,i)
+                if num_row == adj_row[0] == adj_row[1] or num_col == adj_col[0] == adj_col[1]:
+                    return False
+
+        return True
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
