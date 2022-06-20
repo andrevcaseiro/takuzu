@@ -63,11 +63,17 @@ class Board:
             > from sys import stdin
             > stdin.readline()
         """
-        # TODO
-        
-        sys.stdin.readline() #??
+        # TODO        
+        board = Board()
 
+        board.n = int(sys.stdin.readline())
+        board.lines = []
 
+        for i in range(board.n):
+            input = sys.stdin.readline()
+            line = input.split("\t")
+            line_int = [int(item) for item in line]
+            board.lines.append(line_int)
 
         pass
 
