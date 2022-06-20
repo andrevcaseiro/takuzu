@@ -7,6 +7,7 @@
 # 99257 Joao Vieira Antunes
 
 import sys
+import numpy as np
 from search import (
     Problem,
     Node,
@@ -41,14 +42,14 @@ class Board:
             for j in range(self.n):
                 if j != 0:
                     out += "\t"
-                out += str(self.lines[i][j])
+                out += str(self.lines[i, j])
             out += "\n"
         return out
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
         # TODO
-        value = self.lines[row][col]
+        value = self.lines[row, col]
 
         return value
 
@@ -56,8 +57,8 @@ class Board:
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
         # TODO
-        upper = self.lines[row-1][col]
-        lower = self.lines[row+1][col]
+        upper = self.lines[row-1, col]
+        lower = self.lines[row+1, col]
 
         return (upper, lower)
 
@@ -65,8 +66,8 @@ class Board:
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
         # TODO
-        upper = self.lines[row][col-1]
-        lower = self.lines[row][col+1]
+        upper = self.lines[row, col-1]
+        lower = self.lines[row, col+1]
 
         return (upper, lower)
 
@@ -85,13 +86,17 @@ class Board:
         board = Board()
 
         board.n = int(sys.stdin.readline())
-        board.lines = []
+        lines = []
 
         for i in range(board.n):
             input = sys.stdin.readline()
             line = input.split("\t")
             line_int = [int(item) for item in line]
-            board.lines.append(line_int)
+            lines.append(line_int)
+        
+        print(sys.getsizeof(lines))
+        board.lines = np.array(lines)
+        print(sys.getsizeof(board.lines))
 
         return board
 
