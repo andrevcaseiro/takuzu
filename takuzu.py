@@ -14,6 +14,7 @@ from search import (
     Node,
     astar_search,
     breadth_first_tree_search,
+    depth_first_graph_search,
     depth_first_tree_search,
     greedy_search,
     recursive_best_first_search,
@@ -140,7 +141,6 @@ class Board:
 class Takuzu(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
-        self.board = board
         self.initial = TakuzuState(board)
 
     def actions(self, state: TakuzuState):
@@ -149,11 +149,13 @@ class Takuzu(Problem):
 
         res = []
 
-        for i in range(self.board.n):
-            for j in range(self.board.n):
-                if self.board.lines[i, j] == 2:
+        for i in range(state.board.n):
+            for j in range(state.board.n):
+                if state.board.lines[i, j] == 2:
+                    #filtrar acoes
                     res.append((i, j, 0))
                     res.append((i, j, 1))
+                    return res
         
         return res
 
