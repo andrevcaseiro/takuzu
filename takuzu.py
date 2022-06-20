@@ -102,9 +102,9 @@ class Board:
         
         board.lines = np.array(lines)
 
-        board.globCounts = np.unique(board.lines, return_counts=True)
-        board.rowCounts = [np.unique(board.lines[i,:], return_counts=True) for i in range(board.n)]
-        board.colCounts = [np.unique(board.lines[:,i], return_counts=True) for i in range(board.n)]
+        board.globCounts = np.unique(board.lines, return_counts=True)[1]
+        board.rowCounts = [np.unique(board.lines[i,:], return_counts=True)[1] for i in range(board.n)]
+        board.colCounts = [np.unique(board.lines[:,i], return_counts=True)[1] for i in range(board.n)]
 
         return board
     
@@ -127,6 +127,7 @@ class Takuzu(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
         self.board = board
+        self.initial = TakuzuState(board)
 
     def actions(self, state: TakuzuState):
         """Retorna uma lista de ações que podem ser executadas a
@@ -174,4 +175,11 @@ if __name__ == "__main__":
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
-    pass
+    board = Board.parse_instance_from_stdin()
+    problem = Takuzu(board)
+
+    # Obter o nó solução usando a procura em profundidade:
+    goal_node = depth_first_tree_search(problem)
+    # Verificar se foi atingida a solução
+    print("Is goal?", problem.goal_test(goal_node.state))
+    print("Solution:\n", goal_node.state.board, sep="")
