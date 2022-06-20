@@ -6,6 +6,7 @@
 # 99180 Andre Valente Caseiro
 # 99257 Joao Vieira Antunes
 
+from hashlib import new
 import sys
 import numpy as np
 from search import (
@@ -48,7 +49,6 @@ class Board:
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
-        # TODO
         value = self.lines[row, col]
 
         return value
@@ -57,17 +57,17 @@ class Board:
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
         # TODO
-        upper = self.lines[row-1, col]
-        lower = self.lines[row+1, col]
+        upper = self.lines[row-1, col] if row-1 > 0 else None
+        lower = self.lines[row+1, col] if row+1 < self.n else None
 
-        return (upper, lower)
+        return (lower, upper)
 
     def adjacent_horizontal_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
         # TODO
-        upper = self.lines[row, col-1]
-        lower = self.lines[row, col+1]
+        upper = self.lines[row, col-1] if col-1 > 0 else None
+        lower = self.lines[row, col+1] if col+1 < self.n else None
 
         return (upper, lower)
 
@@ -94,9 +94,7 @@ class Board:
             line_int = [int(item) for item in line]
             lines.append(line_int)
         
-        print(sys.getsizeof(lines))
         board.lines = np.array(lines)
-        print(sys.getsizeof(board.lines))
 
         return board
 
@@ -114,8 +112,8 @@ class Takuzu(Problem):
 
         res = []
 
-        for i in self.board.n:
-            for j in self.board.n:
+        for i in range(self.board.n):
+            for j in range(self.board.n):
                 if self.board.lines[i, j] == 2:
                     res.append((i, j, 0))
                     res.append((i, j, 1))
@@ -128,10 +126,10 @@ class Takuzu(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
 
-
+        newBoard = np.copy(state.board)
+        newBoard.lines[action[0], action[1]] = action[2]
 
         return TakuzuState()
-        pass
 
     def goal_test(self, state: TakuzuState):
         """Retorna True se e só se o estado passado como argumento é
