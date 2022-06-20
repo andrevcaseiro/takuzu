@@ -47,6 +47,21 @@ class Board:
             out += "\n"
         return out
 
+    def __len__(self):
+        return self.n
+    
+    def __getitem__(self, key):
+        return self.lines[key]
+    
+    def __setitem__(self, key, item):
+        self.lines[key] = item
+        self.globCounts[2] -= 1
+        self.globCounts[item] += 1
+        self.rowCounts[key[0]][2] -=1
+        self.rowCounts[key[0]][item] +=1
+        self.colCounts[key[1]][2] -=1
+        self.colCounts[key[1]][item] += 1
+
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
         value = self.lines[row, col]
@@ -87,6 +102,22 @@ class Board:
         
         board.lines = np.array(lines)
 
+        board.globCounts = np.unique(board.lines, return_counts=True)
+        board.rowCounts = [np.unique(board.lines[i,:], return_counts=True) for i in range(board.n)]
+        board.colCounts = [np.unique(board.lines[:,i], return_counts=True) for i in range(board.n)]
+
+        return board
+    
+    def copy(self):
+        """Retorna uma cópia do tabuleiro"""
+        board = Board()
+
+        board.n = self.n
+        board.lines = np.copy(self.lines)
+        board.globCounts = self.globCounts.copy()
+        board.rowCounts = self.rowCounts.copy()
+        board.colCounts = self.colCounts.copy()
+
         return board
 
     # TODO: outros metodos da classe
@@ -117,10 +148,10 @@ class Takuzu(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
 
-        newBoard = np.copy(state.board)
+        newBoard = state.board.copy()
         newBoard.lines[action[0], action[1]] = action[2]
 
-        return TakuzuState()
+        return TakuzuState(newBoard)
 
     def goal_test(self, state: TakuzuState):
         """Retorna True se e só se o estado passado como argumento é
