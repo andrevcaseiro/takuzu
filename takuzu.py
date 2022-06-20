@@ -35,6 +35,16 @@ class TakuzuState:
 class Board:
     """Representação interna de um tabuleiro de Takuzu."""
 
+    def __repr__(self) -> str:
+        out = ""
+        for i in range(self.n):
+            for j in range(self.n):
+                if j != 0:
+                    out += "\t"
+                out += str(self.lines[i][j])
+            out += "\n"
+        return out
+
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
         # TODO
@@ -95,7 +105,7 @@ class Takuzu(Problem):
 
     def actions(self, state: TakuzuState):
         """Retorna uma lista de ações que podem ser executadas a
-        partir do estado passado como argumento."""´
+        partir do estado passado como argumento."""
 
         res = []
 
@@ -113,7 +123,7 @@ class Takuzu(Problem):
         das presentes na lista obtida pela execução de
         self.actions(state)."""
 
-        
+
 
         return TakuzuState()
         pass
