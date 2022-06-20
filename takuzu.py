@@ -75,7 +75,7 @@ class Board:
             line_int = [int(item) for item in line]
             board.lines.append(line_int)
 
-        pass
+        return board
 
     # TODO: outros metodos da classe
 
@@ -83,21 +83,31 @@ class Board:
 class Takuzu(Problem):
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
-        # TODO
-        pass
+        self.board = board
 
     def actions(self, state: TakuzuState):
         """Retorna uma lista de ações que podem ser executadas a
-        partir do estado passado como argumento."""
-        # TODO
-        pass
+        partir do estado passado como argumento."""´
+
+        res = []
+
+        for i in self.board.n:
+            for j in self.board.n:
+                if self.board.lines[i, j] == 2:
+                    res.append((i, j, 0))
+                    res.append((i, j, 1))
+        
+        return res
 
     def result(self, state: TakuzuState, action):
         """Retorna o estado resultante de executar a 'action' sobre
         'state' passado como argumento. A ação a executar deve ser uma
         das presentes na lista obtida pela execução de
         self.actions(state)."""
-        # TODO
+
+        
+
+        return TakuzuState()
         pass
 
     def goal_test(self, state: TakuzuState):
