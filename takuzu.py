@@ -88,6 +88,11 @@ class Board:
     def parse_instance_from_stdin():
         """Lê o test do standard input (stdin) que é passado como argumento
         e retorna uma instância da classe Board."""
+
+        def counts(arr):
+            unique, counts = np.unique(arr, return_counts=True)
+            return dict(zip(unique, counts))
+
         # TODO        
         board = Board()
 
@@ -102,9 +107,9 @@ class Board:
         
         board.lines = np.array(lines)
 
-        board.globCounts = np.unique(board.lines, return_counts=True)[1]
-        board.rowCounts = [np.unique(board.lines[i,:], return_counts=True)[1] for i in range(board.n)]
-        board.colCounts = [np.unique(board.lines[:,i], return_counts=True)[1] for i in range(board.n)]
+        board.globCounts = counts(board.lines)
+        board.rowCounts = [counts(board.lines[i,:]) for i in range(board.n)]
+        board.colCounts = [counts(board.lines[:,i]) for i in range(board.n)]
 
         return board
     
@@ -160,7 +165,9 @@ class Takuzu(Problem):
         estão preenchidas com uma sequência de números adjacentes."""
         # TODO
 
-        #tabuleiro preenchido??
+        #tabuleiro preenchido
+        if self.board.globCounts[2] != 0:
+            return False
 
         #numero igual de 0 e 1 em cada linha e coluna
         for i in range(self.board.n):
@@ -199,17 +206,17 @@ class Takuzu(Problem):
     # TODO: outros metodos da classe
 
 
-if __name__ == "__main__":
+#if __name__ == "__main__":
     # TODO:
     # Ler o ficheiro do standard input,
     # Usar uma técnica de procura para resolver a instância,
     # Retirar a solução a partir do nó resultante,
     # Imprimir para o standard output no formato indicado.
-    board = Board.parse_instance_from_stdin()
-    problem = Takuzu(board)
-
-    # Obter o nó solução usando a procura em profundidade:
-    goal_node = depth_first_tree_search(problem)
-    # Verificar se foi atingida a solução
-    print("Is goal?", problem.goal_test(goal_node.state))
-    print("Solution:\n", goal_node.state.board, sep="")
+    #board = Board.parse_instance_from_stdin()
+    #problem = Takuzu(board)
+#
+    ## Obter o nó solução usando a procura em profundidade:
+    #goal_node = depth_first_tree_search(problem)
+    ## Verificar se foi atingida a solução
+    #print("Is goal?", problem.goal_test(goal_node.state))
+    #print("Solution:\n", goal_node.state.board, sep="")
