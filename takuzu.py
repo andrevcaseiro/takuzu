@@ -56,7 +56,6 @@ class Board:
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
-        # TODO
         upper = self.lines[row-1, col] if row-1 > 0 else None
         lower = self.lines[row+1, col] if row+1 < self.n else None
 
@@ -65,7 +64,6 @@ class Board:
     def adjacent_horizontal_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-        # TODO
         upper = self.lines[row, col-1] if col-1 > 0 else None
         lower = self.lines[row, col+1] if col+1 < self.n else None
 
@@ -74,14 +72,7 @@ class Board:
     @staticmethod
     def parse_instance_from_stdin():
         """Lê o test do standard input (stdin) que é passado como argumento
-        e retorna uma instância da classe Board.
-
-        Por exemplo:
-            $ python3 takuzu.py < input_T01
-
-            > from sys import stdin
-            > stdin.readline()
-        """
+        e retorna uma instância da classe Board."""
         # TODO        
         board = Board()
 
