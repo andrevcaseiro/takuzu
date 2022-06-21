@@ -122,6 +122,8 @@ class Board:
         board.rowCounts = [counts(board.lines[i, :]) for i in range(board.n)]
         board.colCounts = [counts(board.lines[:, i]) for i in range(board.n)]
 
+        board.goalCounts = ((board.n-1)/2, (board.n+1)/2) if board.n % 2 != 0 else (board.n/2, board.n/2)
+
         return board
 
     def copy(self):
@@ -133,6 +135,7 @@ class Board:
         board.globCounts = self.globCounts.copy()
         board.rowCounts = [counts.copy() for counts in self.rowCounts]
         board.colCounts = [counts.copy() for counts in self.colCounts]
+        board.goalCounts = self.goalCounts
 
         return board
 
@@ -165,8 +168,8 @@ class Takuzu(Problem):
                             or 1 == adj_row[1] == state.board.get_number(i, j + 2)
                             or 1 == adj_col[0] == state.board.get_number(i + 2, j)
                             or 1 == adj_col[1] == state.board.get_number(i - 2, j)
-                            or state.board.rowCounts[i][1] >= state.board.n/2
-                            or state.board.colCounts[j][1] >= state.board.n/2):
+                            or state.board.rowCounts[i][1] == state.board.goalCounts[1]
+                            or state.board.colCounts[j][1] == state.board.goalCounts[1]):
                         res.append((i, j, 1))
                     if not (0 == adj_row[0] == adj_row[1]
                             or 0 == adj_col[0] == adj_col[1]
@@ -174,10 +177,9 @@ class Takuzu(Problem):
                             or 0 == adj_row[1] == state.board.get_number(i, j + 2)
                             or 0 == adj_col[0] == state.board.get_number(i + 2, j)
                             or 0 == adj_col[1] == state.board.get_number(i - 2, j)
-                            or state.board.rowCounts[i][0] >= state.board.n/2
-                            or state.board.colCounts[j][0] >= state.board.n/2):
+                            or state.board.rowCounts[i][0] == state.board.goalCounts[1]
+                            or state.board.colCounts[j][0] == state.board.goalCounts[1]):
                         res.append((i, j, 0))
-                    print(res)
                     return res
 
         return res
@@ -197,8 +199,6 @@ class Takuzu(Problem):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
-        # TODO
-        print(state.board)
 
         # tabuleiro preenchido
         if state.board.globCounts[2] != 0:
@@ -206,8 +206,8 @@ class Takuzu(Problem):
 
         # numero igual de 0 e 1 em cada linha e coluna
         for i in range(state.board.n):
-            if (state.board.rowCounts[i][0] != state.board.n / 2
-                    or state.board.colCounts[i][0] != state.board.n / 2):
+            if (state.board.rowCounts[i][0] not in state.board.goalCounts
+                    or state.board.colCounts[i][0] not in state.board.goalCounts):
                 return False
 
         # linhas e colunas diferentes
