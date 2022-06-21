@@ -65,14 +65,15 @@ class Board:
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
-        value = self.lines[row, col] if 0 < row < self.n and 0 < col < self.n else None
+        value = self.lines[
+            row, col] if 0 <= row < self.n and 0 <= col < self.n else None
 
         return value
 
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
-        upper = self.lines[row - 1, col] if row - 1 > 0 else None
+        upper = self.lines[row - 1, col] if row - 1 >= 0 else None
         lower = self.lines[row + 1, col] if row + 1 < self.n else None
 
         return (lower, upper)
@@ -80,7 +81,7 @@ class Board:
     def adjacent_horizontal_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-        upper = self.lines[row, col - 1] if col - 1 > 0 else None
+        upper = self.lines[row, col - 1] if col - 1 >= 0 else None
         lower = self.lines[row, col + 1] if col + 1 < self.n else None
 
         return (upper, lower)
@@ -154,25 +155,23 @@ class Takuzu(Problem):
             for j in range(state.board.n):
 
                 if state.board.lines[i, j] == 2:
-                    
+
                     adj_row = state.board.adjacent_horizontal_numbers(i, j)
                     adj_col = state.board.adjacent_vertical_numbers(i, j)
 
-                    if not(1 == adj_row[0] == adj_row[1] 
-                    or 1 == adj_col[0] == adj_col[1] 
-
-                    or 1 == adj_row[0] == state.board.get_number(i,j-2)
-                    or 1 == adj_row[1] == state.board.get_number(i,j+2)
-
-                    or 1 == adj_col[0] == state.board.get_number(i+2,j)
-                    or 1 == adj_col[1] == state.board.get_number(i-2,j)):
+                    if not (1 == adj_row[0] == adj_row[1] or
+                            1 == adj_col[0] == adj_col[1] or 1 == adj_row[0] ==
+                            state.board.get_number(i, j - 2) or 1 == adj_row[1]
+                            == state.board.get_number(i, j + 2) or 1 ==
+                            adj_col[0] == state.board.get_number(i + 2, j) or 1
+                            == adj_col[1] == state.board.get_number(i - 2, j)):
                         res.append((i, j, 1))
-                    if not(0 == adj_row[0] == adj_row[1] 
-                    or 0 == adj_col[0] == adj_col[1] 
-                    or 0 == adj_row[0] == state.board.get_number(i,j-2)
-                    or 0 == adj_row[1] == state.board.get_number(i,j+2)
-                    or 0 == adj_col[0] == state.board.get_number(i+2,j)
-                    or 0 == adj_col[1] == state.board.get_number(i-2,j)):
+                    if not (0 == adj_row[0] == adj_row[1] or
+                            0 == adj_col[0] == adj_col[1] or 0 == adj_row[0] ==
+                            state.board.get_number(i, j - 2) or 0 == adj_row[1]
+                            == state.board.get_number(i, j + 2) or 0 ==
+                            adj_col[0] == state.board.get_number(i + 2, j) or 0
+                            == adj_col[1] == state.board.get_number(i - 2, j)):
                         res.append((i, j, 0))
                     return res
 
@@ -202,7 +201,8 @@ class Takuzu(Problem):
 
         #numero igual de 0 e 1 em cada linha e coluna
         for i in range(state.board.n):
-            if state.board.rowCounts != state.board.n / 2 or state.board.colCounts != state.board.n / 2:
+            if (state.board.rowCounts[i][0] != state.board.n / 2
+                    or state.board.colCounts[i][0] != state.board.n / 2):
                 return False
 
         #linhas e colunas diferentes
@@ -222,8 +222,8 @@ class Takuzu(Problem):
                 adj_col = state.board.adjacent_vertical_numbers(j, i)
                 num_row = state.board.get_number(i, j)
                 num_col = state.board.get_number(j, i)
-                if num_row == adj_row[0] == adj_row[1] or num_col == adj_col[
-                        0] == adj_col[1]:
+                if (num_row == adj_row[0] == adj_row[1]
+                        or num_col == adj_col[0] == adj_col[1]):
                     return False
 
         return True
