@@ -159,19 +159,23 @@ class Takuzu(Problem):
                     adj_row = state.board.adjacent_horizontal_numbers(i, j)
                     adj_col = state.board.adjacent_vertical_numbers(i, j)
 
-                    if not (1 == adj_row[0] == adj_row[1] or
-                            1 == adj_col[0] == adj_col[1] or 1 == adj_row[0] ==
-                            state.board.get_number(i, j - 2) or 1 == adj_row[1]
-                            == state.board.get_number(i, j + 2) or 1 ==
-                            adj_col[0] == state.board.get_number(i + 2, j) or 1
-                            == adj_col[1] == state.board.get_number(i - 2, j)):
+                    if not (1 == adj_row[0] == adj_row[1]
+                            or 1 == adj_col[0] == adj_col[1]
+                            or 1 == adj_row[0] == state.board.get_number(i, j - 2)
+                            or 1 == adj_row[1] == state.board.get_number(i, j + 2)
+                            or 1 == adj_col[0] == state.board.get_number(i + 2, j)
+                            or 1 == adj_col[1] == state.board.get_number(i - 2, j)
+                            or state.board.rowCounts[i][1] >= state.board.n/2
+                            or state.board.colCounts[j][1] >= state.board.n/2):
                         res.append((i, j, 1))
-                    if not (0 == adj_row[0] == adj_row[1] or
-                            0 == adj_col[0] == adj_col[1] or 0 == adj_row[0] ==
-                            state.board.get_number(i, j - 2) or 0 == adj_row[1]
-                            == state.board.get_number(i, j + 2) or 0 ==
-                            adj_col[0] == state.board.get_number(i + 2, j) or 0
-                            == adj_col[1] == state.board.get_number(i - 2, j)):
+                    if not (0 == adj_row[0] == adj_row[1]
+                            or 0 == adj_col[0] == adj_col[1]
+                            or 0 == adj_row[0] == state.board.get_number(i, j - 2)
+                            or 0 == adj_row[1] == state.board.get_number(i, j + 2)
+                            or 0 == adj_col[0] == state.board.get_number(i + 2, j)
+                            or 0 == adj_col[1] == state.board.get_number(i - 2, j)
+                            or state.board.rowCounts[i][0] >= state.board.n/2
+                            or state.board.colCounts[j][0] >= state.board.n/2):
                         res.append((i, j, 0))
                     return res
 
@@ -195,17 +199,17 @@ class Takuzu(Problem):
         # TODO
         print(state.board)
 
-        #tabuleiro preenchido
+        # tabuleiro preenchido
         if state.board.globCounts[2] != 0:
             return False
 
-        #numero igual de 0 e 1 em cada linha e coluna
+        # numero igual de 0 e 1 em cada linha e coluna
         for i in range(state.board.n):
             if (state.board.rowCounts[i][0] != state.board.n / 2
                     or state.board.colCounts[i][0] != state.board.n / 2):
                 return False
 
-        #linhas e colunas diferentes
+        # linhas e colunas diferentes
         for i in range(state.board.n):
             temp_row = state.board.lines[i]
             temp_col = state.board.lines[:, i]
@@ -215,7 +219,7 @@ class Takuzu(Problem):
                                       temp_row, state.board.lines[j]):
                     return False
 
-        #nao ha mais que 2 adjacentes
+        # nao ha mais que 2 adjacentes
         for i in range(state.board.n):
             for j in range(1, state.board.n - 1):
                 adj_row = state.board.adjacent_horizontal_numbers(i, j)
