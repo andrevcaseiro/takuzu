@@ -180,10 +180,8 @@ class Takuzu(Problem):
 
         #numero igual de 0 e 1 em cada linha e coluna
         for i in range(state.board.n):
-            ul = state.board.lines[i].sum()
-            uc = state.board.lines[:,i].sum()
-            if ul != state.board.n/2 or uc != state.board.n/2:
-                return False                
+            if state.board.rowCounts != state.board.n/2 or state.board.colCounts != state.board.n/2:
+                return False
         
         #linhas e colunas diferentes
         for i in range(state.board.n):
@@ -200,7 +198,7 @@ class Takuzu(Problem):
                 adj_col = state.board.adjacent_vertical_numbers(j, i)
                 num_row = state.board.get_number(i,j)
                 num_col = state.board.get_number(j,i)
-                if num_row == adj_row[0] and num_row == adj_row[1] or num_col == adj_col[0] and num_col == adj_col[1]:
+                if num_row == adj_row[0] == adj_row[1] or num_col == adj_col[0] == adj_col[1]:
                     return False
 
         return True
