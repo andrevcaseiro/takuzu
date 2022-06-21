@@ -50,17 +50,17 @@ class Board:
 
     def __len__(self):
         return self.n
-    
+
     def __getitem__(self, key):
         return self.lines[key]
-    
+
     def __setitem__(self, key, item):
         self.lines[key] = item
         self.globCounts[2] -= 1
         self.globCounts[item] += 1
-        self.rowCounts[key[0]][2] -=1
-        self.rowCounts[key[0]][item] +=1
-        self.colCounts[key[1]][2] -=1
+        self.rowCounts[key[0]][2] -= 1
+        self.rowCounts[key[0]][item] += 1
+        self.colCounts[key[1]][2] -= 1
         self.colCounts[key[1]][item] += 1
 
     def get_number(self, row: int, col: int) -> int:
@@ -72,16 +72,16 @@ class Board:
     def adjacent_vertical_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente abaixo e acima,
         respectivamente."""
-        upper = self.lines[row-1, col] if row-1 > 0 else None
-        lower = self.lines[row+1, col] if row+1 < self.n else None
+        upper = self.lines[row - 1, col] if row - 1 > 0 else None
+        lower = self.lines[row + 1, col] if row + 1 < self.n else None
 
         return (lower, upper)
 
     def adjacent_horizontal_numbers(self, row: int, col: int) -> (int, int):
         """Devolve os valores imediatamente à esquerda e à direita,
         respectivamente."""
-        upper = self.lines[row, col-1] if col-1 > 0 else None
-        lower = self.lines[row, col+1] if col+1 < self.n else None
+        upper = self.lines[row, col - 1] if col - 1 > 0 else None
+        lower = self.lines[row, col + 1] if col + 1 < self.n else None
 
         return (upper, lower)
 
@@ -103,7 +103,7 @@ class Board:
 
             return c
 
-        # TODO        
+        # TODO
         board = Board()
 
         board.n = int(sys.stdin.readline())
@@ -114,15 +114,15 @@ class Board:
             line = input.split("\t")
             line_int = [int(item) for item in line]
             lines.append(line_int)
-        
+
         board.lines = np.array(lines)
 
         board.globCounts = counts(board.lines)
-        board.rowCounts = [counts(board.lines[i,:]) for i in range(board.n)]
-        board.colCounts = [counts(board.lines[:,i]) for i in range(board.n)]
+        board.rowCounts = [counts(board.lines[i, :]) for i in range(board.n)]
+        board.colCounts = [counts(board.lines[:, i]) for i in range(board.n)]
 
         return board
-    
+
     def copy(self):
         """Retorna uma cópia do tabuleiro"""
         board = Board()
@@ -139,6 +139,7 @@ class Board:
 
 
 class Takuzu(Problem):
+
     def __init__(self, board: Board):
         """O construtor especifica o estado inicial."""
         self.initial = TakuzuState(board)
@@ -174,7 +175,7 @@ class Takuzu(Problem):
                     or 0 == adj_col[1] == state.board.get_number(i-2,j)):
                         res.append((i, j, 0))
                     return res
-        
+
         return res
 
     def result(self, state: TakuzuState, action):
@@ -201,27 +202,28 @@ class Takuzu(Problem):
 
         #numero igual de 0 e 1 em cada linha e coluna
         for i in range(state.board.n):
-            ul = state.board.lines[i].sum()
-            uc = state.board.lines[:,i].sum()
-            if ul != state.board.n/2 or uc != state.board.n/2:
-                return False                
-        
+            if state.board.rowCounts != state.board.n / 2 or state.board.colCounts != state.board.n / 2:
+                return False
+
         #linhas e colunas diferentes
         for i in range(state.board.n):
             temp_row = state.board.lines[i]
-            temp_col = state.board.lines[:,i]
-            for j in range(i+1, state.board.n):
-                if np.array_equal(temp_col,state.board.lines[:,j]) or np.array_equal(temp_row,state.board.lines[j]):
-                    return False 
+            temp_col = state.board.lines[:, i]
+            for j in range(i + 1, state.board.n):
+                if np.array_equal(temp_col,
+                                  state.board.lines[:, j]) or np.array_equal(
+                                      temp_row, state.board.lines[j]):
+                    return False
 
         #nao ha mais que 2 adjacentes
         for i in range(state.board.n):
-            for j in range(1,state.board.n-1):
+            for j in range(1, state.board.n - 1):
                 adj_row = state.board.adjacent_horizontal_numbers(i, j)
                 adj_col = state.board.adjacent_vertical_numbers(j, i)
-                num_row = state.board.get_number(i,j)
-                num_col = state.board.get_number(j,i)
-                if num_row == adj_row[0] and num_row == adj_row[1] or num_col == adj_col[0] and num_col == adj_col[1]:
+                num_row = state.board.get_number(i, j)
+                num_col = state.board.get_number(j, i)
+                if num_row == adj_row[0] == adj_row[1] or num_col == adj_col[
+                        0] == adj_col[1]:
                     return False
 
         return True
