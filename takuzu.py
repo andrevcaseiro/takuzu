@@ -206,9 +206,17 @@ class Takuzu(Problem):
 
         # numero igual de 0 e 1 em cada linha e coluna
         for i in range(state.board.n):
-            if (state.board.rowCounts[i][0] != state.board.n / 2
+            if state.board.n % 2 !=0: 
+                if ((state.board.rowCounts[i][0] != state.board.n / 2 and  state.board.rowCounts[i][1] != (state.board.n / 2)+1)^
+                    (state.board.rowCounts[i][0] != (state.board.n / 2)+1 and  state.board.rowCounts[i][1] != state.board.n / 2)
+
+                    or (state.board.colCounts[i][0] != state.board.n / 2 and  state.board.colCounts[i][1] != (state.board.n / 2)+1)^
+                    (state.board.colCounts[i][0] != (state.board.n / 2)+1 and  state.board.colCounts[i][1] != state.board.n / 2)):
+                    return False
+            else:
+                if (state.board.rowCounts[i][0] != state.board.n / 2
                     or state.board.colCounts[i][0] != state.board.n / 2):
-                return False
+                    return False
 
         # linhas e colunas diferentes
         for i in range(state.board.n):
