@@ -65,7 +65,7 @@ class Board:
 
     def get_number(self, row: int, col: int) -> int:
         """Devolve o valor na respetiva posição do tabuleiro."""
-        value = self.lines[row, col]
+        value = self.lines[row, col] if 0 < row < self.n and 0 < col < self.n else None
 
         return value
 
@@ -151,10 +151,28 @@ class Takuzu(Problem):
 
         for i in range(state.board.n):
             for j in range(state.board.n):
+
                 if state.board.lines[i, j] == 2:
-                    #filtrar acoes
-                    res.append((i, j, 0))
-                    res.append((i, j, 1))
+                    
+                    adj_row = state.board.adjacent_horizontal_numbers(i, j)
+                    adj_col = state.board.adjacent_vertical_numbers(i, j)
+
+                    if not(1 == adj_row[0] == adj_row[1] 
+                    or 1 == adj_col[0] == adj_col[1] 
+
+                    or 1 == adj_row[0] == state.board.get_number(i,j-2)
+                    or 1 == adj_row[1] == state.board.get_number(i,j+2)
+
+                    or 1 == adj_col[0] == state.board.get_number(i+2,j)
+                    or 1 == adj_col[1] == state.board.get_number(i-2,j)):
+                        res.append((i, j, 1))
+                    if not(0 == adj_row[0] == adj_row[1] 
+                    or 0 == adj_col[0] == adj_col[1] 
+                    or 0 == adj_row[0] == state.board.get_number(i,j-2)
+                    or 0 == adj_row[1] == state.board.get_number(i,j+2)
+                    or 0 == adj_col[0] == state.board.get_number(i+2,j)
+                    or 0 == adj_col[1] == state.board.get_number(i-2,j)):
+                        res.append((i, j, 0))
                     return res
         
         return res
@@ -175,6 +193,7 @@ class Takuzu(Problem):
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
         # TODO
+        print(state.board)
 
         #tabuleiro preenchido
         if state.board.globCounts[2] != 0:
