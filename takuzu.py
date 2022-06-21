@@ -131,8 +131,8 @@ class Board:
         board.n = self.n
         board.lines = np.copy(self.lines)
         board.globCounts = self.globCounts.copy()
-        board.rowCounts = self.rowCounts.copy()
-        board.colCounts = self.colCounts.copy()
+        board.rowCounts = [counts.copy() for counts in self.rowCounts]
+        board.colCounts = [counts.copy() for counts in self.colCounts]
 
         return board
 
@@ -177,6 +177,7 @@ class Takuzu(Problem):
                             or state.board.rowCounts[i][0] >= state.board.n/2
                             or state.board.colCounts[j][0] >= state.board.n/2):
                         res.append((i, j, 0))
+                    print(res)
                     return res
 
         return res
