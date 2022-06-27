@@ -198,14 +198,37 @@ class Takuzu(Problem):
 
         newBoard = state.board.copy()
         newBoard[action[0], action[1]] = action[2]
+        for i in range(newBoard.n):
+            for j in range(newBoard.n):
+                if newBoard.lines[i, j] == 2:
 
+                    adj_row = newBoard.adjacent_horizontal_numbers(i, j)
+                    adj_col = newBoard.adjacent_vertical_numbers(i, j)
+
+                    if (1 == adj_row[0] == adj_row[1]
+                            or 1 == adj_col[0] == adj_col[1]
+                            or 1 == adj_row[0] == newBoard.get_number(i, j - 2)
+                            or 1 == adj_row[1] == newBoard.get_number(i, j + 2)
+                            or 1 == adj_col[0] == newBoard.get_number(i + 2, j)
+                            or 1 == adj_col[1] == newBoard.get_number(i - 2, j)
+                            or newBoard.rowCounts[i][1] == newBoard.goalCounts[1]
+                            or newBoard.colCounts[j][1] == newBoard.goalCounts[1]):
+                        newBoard[i, j] = 0
+                    elif (0 == adj_row[0] == adj_row[1]
+                            or 0 == adj_col[0] == adj_col[1]
+                            or 0 == adj_row[0] == newBoard.get_number(i, j - 2)
+                            or 0 == adj_row[1] == newBoard.get_number(i, j + 2)
+                            or 0 == adj_col[0] == newBoard.get_number(i + 2, j)
+                            or 0 == adj_col[1] == newBoard.get_number(i - 2, j)
+                            or newBoard.rowCounts[i][0] == newBoard.goalCounts[1]
+                            or newBoard.colCounts[j][0] == newBoard.goalCounts[1]):
+                        newBoard[i, j] = 1        
         return TakuzuState(newBoard)
 
     def goal_test(self, state: TakuzuState):
         """Retorna True se e só se o estado passado como argumento é
         um estado objetivo. Deve verificar se todas as posições do tabuleiro
         estão preenchidas com uma sequência de números adjacentes."""
-
         # tabuleiro preenchido
         if state.board.globCounts[2] != 0:
             return False
