@@ -14,10 +14,10 @@ from search import (
     Node,
     astar_search,
     breadth_first_tree_search,
-    depth_first_graph_search,
     depth_first_tree_search,
     greedy_search,
     recursive_best_first_search,
+    compare_searchers
 )
 
 
@@ -122,7 +122,8 @@ class Board:
         board.rowCounts = [counts(board.lines[i, :]) for i in range(board.n)]
         board.colCounts = [counts(board.lines[:, i]) for i in range(board.n)]
 
-        board.goalCounts = ((board.n-1)/2, (board.n+1)/2) if board.n % 2 != 0 else (board.n/2, board.n/2)
+        board.goalCounts = ((board.n-1)/2, (board.n+1) /
+                            2) if board.n % 2 != 0 else (board.n/2, board.n/2)
 
         return board
 
@@ -152,12 +153,14 @@ class Takuzu(Problem):
         """Retorna uma lista de ações que podem ser executadas a
         partir do estado passado como argumento."""
 
-        res = []
+        final_res = []
 
         for i in range(state.board.n):
             for j in range(state.board.n):
 
-                if state.board.lines[i, j] == 2:
+                if state.board[i, j] == 2:
+
+                    res = []
 
                     adj_row = state.board.adjacent_horizontal_numbers(i, j)
                     adj_col = state.board.adjacent_vertical_numbers(i, j)
@@ -180,9 +183,12 @@ class Takuzu(Problem):
                             or state.board.rowCounts[i][0] == state.board.goalCounts[1]
                             or state.board.colCounts[j][0] == state.board.goalCounts[1]):
                         res.append((i, j, 0))
-                    return res
+                    if len(res) <= 1:
+                        return res
+                    if not final_res:
+                        final_res = res
 
-        return res
+        return final_res
 
     def result(self, state: TakuzuState, action):
         """Retorna o estado resultante de executar a 'action' sobre
@@ -235,23 +241,48 @@ class Takuzu(Problem):
 
     def h(self, node: Node):
         """Função heuristica utilizada para a procura A*."""
-        # TODO
-        pass
+
+        row_h = 0
+        col_h = 0
+
+        for i in range(node.state.board.n):
+            row_h += node.state.board.goalCounts[1] - max(node.state.board.rowCounts[i][0], node.state.board.rowCounts[i][1])
+            col_h += node.state.board.goalCounts[1] - max(node.state.board.colCounts[i][0], node.state.board.colCounts[i][1])
+        
+        return max(row_h, col_h)
 
     # TODO: outros metodos da classe
 
+class Takuzu2(Takuzu):
+    def h(self, node: Node):
+        """Função heuristica utilizada para a procura A*."""
+        
+        row_h = 0
+        col_h = 0
+
+        for i in range(node.state.board.n):
+            row_h += 2*node.state.board.n - 2*min(node.state.board.rowCounts[i][0], node.state.board.rowCounts[i][1])
+            col_h += 2*node.state.board.n - 2*min(node.state.board.colCounts[i][0], node.state.board.colCounts[i][1])
+        
+        return max(row_h, col_h)
+
+class Takuzu3(Takuzu):
+    def h(self, node: Node):
+        """Função heuristica utilizada para a procura A*."""
+        
+        row_h = 0
+        col_h = 0
+
+        for i in range(node.state.board.n):
+            row_h += 2*node.state.board.n - 2*min(node.state.board.rowCounts[i][0], node.state.board.rowCounts[i][1])
+            col_h += 2*node.state.board.n - 2*min(node.state.board.colCounts[i][0], node.state.board.colCounts[i][1])
+        
+        return min(row_h, col_h)
 
 if __name__ == "__main__":
-    # TODO:
-    # Ler o ficheiro do standard input,
-    # Usar uma técnica de procura para resolver a instância,
-    # Retirar a solução a partir do nó resultante,
-    # Imprimir para o standard output no formato indicado.
     board = Board.parse_instance_from_stdin()
     problem = Takuzu(board)
 
-    # Obter o nó solução usando a procura em profundidade:
-    goal_node = depth_first_tree_search(problem)
-    # Verificar se foi atingida a solução
-    # print("Is goal?", problem.goal_test(goal_node.state))
+    goal_node = breadth_first_tree_search(problem)
+
     print(goal_node.state.board, end="")
